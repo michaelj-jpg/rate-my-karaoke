@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rate My Karaoke - Premium Interactive Preview</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00ffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Rate My Karaoke">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- Google Fonts for Ultra-Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Decorative Glowing Orbs -->
+  <div class="glow-orb orb-pink"></div>
+  <div class="glow-orb orb-cyan"></div>
+  <div class="glow-orb orb-purple"></div>
+
+  <div class="app-container">
+    <!-- Header Banner -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div id="app-logo-preview" class="logo-preview-container">
+          <!-- Fallback dynamic SVG Logo -->
+          <svg class="mic-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" x2="12" y1="19" y2="22"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="main-title">RATE MY KARAOKE</h1>
+          <p class="subtitle">Interactive Venue Experience</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector (For Mobile / Compact Views) -->
+      <div class="mobile-mode-selector">
+        <button id="btn-toggle-host" class="mode-tab active" data-target="host">Host Console</button>
+        <button id="btn-toggle-guest" class="mode-tab" data-target="guest">Guest Phone App</button>
+      </div>
+
+      <!-- General Reset & Help Actions -->
+      <div class="header-actions">
+        <button id="btn-reset-demo" class="btn btn-secondary btn-sm" title="Clear all local data and restore defaults">
+          Reset Demo Data
+        </button>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <!-- HOST SIDE (Left Pane / Console) -->
+      <section id="panel-host" class="simulator-panel host-panel">
+        <div class="panel-header">
+          <div class="status-indicator live">LIVE</div>
+          <h2 class="panel-title text-pink">Host Console</h2>
+        </div>
+
+        <div class="panel-content space-y-6">
+          <!-- Card 1: Venue & Branding -->
+          <div class="neon-card border-pink">
+            <h3 class="card-title text-magenta">Venue Branding</h3>
+            <div class="venue-info">
+              <span class="label">Current Venue:</span>
+              <span id="venue-name" class="value text-white font-semibold">The Mic Drop</span>
+            </div>
+            
+            <div class="file-upload-wrapper mt-4">
+              <label for="logo-upload" class="btn btn-primary w-full text-center">
+                <svg class="icon-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" x2="12" y1="3" y2="15"></line>
+                </svg>
+                Upload Custom Logo
+              </label>
+              <input type="file" id="logo-upload" accept="image/*" class="hidden-input" />
+              <p class="upload-tip">Upload your venue's logo image to display in the header.</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Performer Controller -->
+          <div class="neon-card border-cyan">
+            <h3 class="card-title text-cyan">Select Active Performer</h3>
+            <p class="card-description">Choose the contestant currently on stage. The Guest View will update instantly.</p>
+            
+            <div id="contestant-selector" class="grid-buttons">
+              <!-- Dynamically populated buttons -->
+            </div>
+            
+            <div class="add-contestant-form mt-4">
+              <div class="input-group">
+                <input type="text" id="input-new-contestant" placeholder="Add custom performer..." maxlength="25" />
+                <button id="btn-add-contestant" class="btn btn-cyan btn-sm">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Live Leaderboard -->
+          <div class="neon-card border-green">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="card-title text-green">Live Leaderboard</h3>
+              <span id="total-votes-count" class="badge">0 Votes Cast</span>
+            </div>
+            <p class="card-description">Scores dynamically recalculate when guests submit ratings.</p>
+            
+            <div id="leaderboard-list" class="leaderboard-container">
+              <!-- Dynamically populated list -->
+              <div class="empty-state">No ratings submitted yet. Be the first to vote!</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GUEST SIDE (Right Pane / Phone Mockup) -->
+      <section id="panel-guest" class="simulator-panel guest-panel">
+        <div class="panel-header hide-on-desktop">
+          <h2 class="panel-title text-cyan">Guest App</h2>
+        </div>
+
+        <!-- Simulated Mobile Device Frame -->
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          
+          <!-- Screen Container -->
+          <div class="phone-screen bg-black">
+            
+            <!-- Dynamic Guest Content (Swaps between screens) -->
+            <div id="guest-screen-content" class="h-full">
+              <!-- Dynamically loaded Guest View goes here -->
+            </div>
+
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Side Panel Instructions / Explainer (Desktop Only) -->
+    <footer class="app-footer">
+      <div class="footer-card border-purple">
+        <h4 class="text-purple font-bold">💡 How to Simulate the Experience</h4>
+        <ul class="simulator-instructions text-zinc-300">
+          <li>
+            <strong>1. Host stage setup:</strong> Under the <em>Host Console</em>, select a contestant (e.g. <strong>Tyler Robinson</strong>).
+          </li>
+          <li>
+            <strong>2. Real-time sync:</strong> Observe the <em>Guest Phone</em> on the right instantly updates its active performer header!
+          </li>
+          <li>
+            <strong>3. Cast anonymous votes:</strong> On the Guest Phone, adjust the sliders for <em>Lyric Accuracy</em>, <em>Tone Quality</em>, and <em>Crowd Reaction</em>, then click <strong>Submit Anonymous Rating</strong>.
+          </li>
+          <li>
+            <strong>4. Leaderboard updates:</strong> Watch the <em>Live Leaderboard</em> immediately recalculate averages and animate the new rankings!
+          </li>
+          <li>
+            <strong>5. Customize:</strong> Try uploading your own image as a logo or adding custom contestants using the text input.
+          </li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+
+  <!-- HTML Templates for Guest Screens (Compiled/Rendered by app.js) -->
+  
+  <!-- Template 1: Guest Landing Screen (Voting form) -->
+  <template id="temp-guest-landing">
+    <div class="guest-voting-screen flex flex-col justify-between h-full p-5 text-white">
+      <div class="voting-header text-center py-2 border-b border-zinc-800">
+        <span class="badge badge-accent">STAGE MONITOR</span>
+        <h2 class="text-2xl font-bold tracking-tight mt-2 text-cyan">Now Performing</h2>
+        <div id="guest-active-performer" class="performer-glow-box mt-3">
+          <!-- Active performer name loaded here -->
+        </div>
+      </div>
+
+      <div class="voting-sliders-container my-6 space-y-5 overflow-y-auto max-h-[380px] pr-1">
+        <h3 class="text-lg font-semibold text-zinc-200 mb-2">Rate This Performance</h3>
+        
+        <!-- Lyric Accuracy Slider -->
+        <div class="slider-group">
+          <div class="slider-labels">
+            <span class="slider-title">Lyric Accuracy</span>
+            <span id="label-val-lyric" class="slider-value text-cyan">7/10</span>
+          </div>
+          <input type="range" id="slider-lyric" min="1" max="10" value="7" class="neon-slider slider-cyan" />
+          <div class="slider-ticks"><span>1</span><span>5</span><span>10</span></div>
+        </div>
+
+        <!-- Tone Quality Slider -->
+        <div class="slider-group">
+          <div class="slider-labels">
+            <span class="slider-title">Tone Quality</span>
+            <span id="label-val-tone" class="slider-value text-magenta">8/10</span>
+          </div>
+          <input type="range" id="slider-tone" min="1" max="10" value="8" class="neon-slider slider-magenta" />
+          <div class="slider-ticks"><span>1</span><span>5</span><span>10</span></div>
+        </div>
+
+        <!-- Crowd Reaction Slider -->
+        <div class="slider-group">
+          <div class="slider-labels">
+            <span class="slider-title">Crowd Reaction</span>
+            <span id="label-val-crowd" class="slider-value text-green">6/10</span>
+          </div>
+          <input type="range" id="slider-crowd" min="1" max="10" value="6" class="neon-slider slider-green" />
+          <div class="slider-ticks"><span>1</span><span>5</span><span>10</span></div>
+        </div>
+      </div>
+
+      <div class="voting-actions mt-auto">
+        <button id="btn-submit-rating" class="btn btn-green w-full py-4 text-black font-extrabold rounded-2xl tracking-wider shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-300">
+          SUBMIT ANONYMOUS RATING
+        </button>
+        <p class="text-center text-xs text-zinc-500 mt-2">🛡️ Secured & completely anonymous</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- Template 2: Guest Thank You Screen -->
+  <template id="temp-guest-thankyou">
+    <div class="guest-thank-you-screen flex flex-col items-center justify-center h-full p-6 text-center text-white">
+      <div class="success-animation-wrapper">
+        <div class="checkmark-circle">
+          <svg class="checkmark-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle-svg" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+      </div>
+      
+      <h2 class="text-3xl font-extrabold text-green mt-6 tracking-wide glow-text-green">THANK YOU!</h2>
+      <p class="text-zinc-300 mt-2 text-sm max-w-[240px] mx-auto">Your anonymous rating has been submitted successfully to the host scoreboard.</p>
+      
+      <!-- Show summary of vote cast -->
+      <div class="rating-receipt mt-6 p-4 rounded-xl border border-zinc-800 bg-zinc-950/60 w-full max-w-[260px]">
+        <h4 class="text-xs text-zinc-400 uppercase tracking-widest mb-2">Your Scores for <span id="receipt-contestant" class="text-cyan font-bold">Jessica</span></h4>
+        <div class="flex justify-between text-xs py-1"><span>Lyric:</span><span id="receipt-lyric" class="font-bold text-cyan">7</span></div>
+        <div class="flex justify-between text-xs py-1"><span>Tone:</span><span id="receipt-tone" class="font-bold text-magenta">8</span></div>
+        <div class="flex justify-between text-xs py-1"><span>Crowd:</span><span id="receipt-crowd" class="font-bold text-green">6</span></div>
+        <div class="border-t border-zinc-800 mt-2 pt-2 flex justify-between text-sm font-bold text-white">
+          <span>Overall:</span>
+          <span id="receipt-avg" class="text-yellow-400">7.0</span>
+        </div>
+      </div>
+
+      <button id="btn-return-home" class="mt-8 btn btn-primary px-8 py-3 rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40">
+        Rate Next Performer
+      </button>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
