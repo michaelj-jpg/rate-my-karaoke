@@ -36,16 +36,27 @@ self.addEventListener('activate', (event) => {
 
 // Fetch and Serve Cached Resources (Offline Support)
 self.addEventListener('fetch', (event) => {
+  // Only handle HTTP/HTTPS requests to avoid browser extension interference
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      // Return cached asset if found
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).catch(() => {
-        // Fallback for document pages if offline and not cached
-        if (event.request.headers.get('accept').includes('text/html')) {
+
+      // Otherwise fetch from network
+      return fetch(event.request).catch((err) => {
+        // Safe check for offline text/html requests (prevent null-pointer exceptions)
+        const acceptHeader = event.request.headers.get('accept');
+        if (acceptHeader && acceptHeader.includes('text/html')) {
           return caches.match('./index.html');
         }
+        // Fail gracefully
+        throw err;
       });
     })
   );
