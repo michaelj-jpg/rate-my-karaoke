@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rate-my-karaoke-cache-v1';
+const CACHE_NAME = 'rate-my-karaoke-cache-v2'; // Incremented cache version
 const ASSETS = [
   './',
   './index.html',
@@ -16,6 +16,8 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS);
     })
   );
+  // Force active immediately without waiting
+  self.skipWaiting();
 });
 
 // Activate Service Worker and Clean Old Caches
@@ -32,6 +34,8 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // Claim clients immediately so the new service worker takes effect
+  self.clients.claim();
 });
 
 // Fetch and Serve Cached Resources (Offline Support)
